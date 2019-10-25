@@ -1,0 +1,2 @@
+-e git+https://github.com/pratha19/NYC_taxi_trip_duration.git@1f501fc2d872757427c0d86ac597780f21b3e7fb#egg=NYC
+pypandoc==1.4

@@ -1,0 +1,7 @@
+README.md
+setup.py
+NYC/__init__.py
+NYC.egg-info/PKG-INFO
+NYC.egg-info/SOURCES.txt
+NYC.egg-info/dependency_links.txt
+NYC.egg-info/top_level.txt

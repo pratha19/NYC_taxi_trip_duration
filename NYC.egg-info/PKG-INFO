@@ -1,0 +1,12 @@
+Metadata-Version: 1.1
+Name: NYC
+Version: 0.1
+Summary: Predicting NYC taxi trip duration from one location to the other
+Home-page: https://github.com/pratha19/NYC_taxi_trip_duration
+Author: Prathamesh Pawar
+Author-email: pawar.pratha@gmail.com
+License: MIT
+Description: 
+        
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
