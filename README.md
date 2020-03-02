@@ -1,7 +1,6 @@
-This project involves predicting the yellow taxi trip duration between any two locations X and Y\
-within NYC. 
+This project involves predicting the yellow taxi trip duration between any two locations X and Y within NYC. 
 
-The project is divided into major parts:
+The project is divided into these major parts:
 1. Raw Data import
 2. External data imports 
 3. Data cleaning
