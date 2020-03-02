@@ -9,4 +9,4 @@ The project is divided into these major parts:
 6. Preparing data for modeling
 7. Building and tuning ML models
 8. Comparing the different models
-9. Conclusion and futrue work
+9. Conclusion and future work
