@@ -4,7 +4,7 @@ The project is divided into these major parts:
 1. Raw Data import
 2. External data imports 
 3. Data cleaning
-4. EDA
+4. [EDA](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/trial.ipynb)
 5. Data cleaning and wranging based on EDA observations
 6. Preparing data for modeling
 7. Building and tuning ML models
