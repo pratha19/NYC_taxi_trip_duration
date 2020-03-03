@@ -52,7 +52,7 @@ def distribution(x_col, data, scale = None, bins = 100, figsize = (10,7)):
     if scale: 
         _ = plt.xscale(scale)
         
-def zone_plot(nyc_shp):
+def zone_plot(nyc_shp, fill_color = 'LocationID'):
     gjds = bokeh.models.GeoJSONDataSource(geojson = nyc_shp.to_json())
     TOOLS = "pan, wheel_zoom,reset,hover,save"
     
@@ -62,7 +62,7 @@ def zone_plot(nyc_shp):
     color_mapper = bokeh.models.LinearColorMapper(palette = bokeh.palettes.Viridis256)
     
     plot_zone.patches('xs', 'ys', 
-              fill_color = {'field': 'LocationID', 'transform': color_mapper},
+              fill_color = {'field': fill_color, 'transform': color_mapper},#borough_num
               fill_alpha = 1., line_color="black", line_width = 0.5,          
               source = gjds)
     
@@ -78,3 +78,36 @@ def zone_plot(nyc_shp):
                         ("(Lon, Lat)", "($x ˚E, $y ˚N)")
                          ]
     return(plot_zone)
+
+def assign_taxi_zones(df, lon_var, lat_var, locid_var):
+    
+    # make a copy since we will modify lats and lons
+    localdf = df[[lon_var, lat_var]].copy()
+    
+    # missing lat lon info is indicated by nan. Fill with zero
+    # which is outside New York shapefile. 
+    localdf[lon_var] = localdf[lon_var].fillna(value=0.)
+    localdf[lat_var] = localdf[lat_var].fillna(value=0.)
+    
+
+    shape_df = gpd.read_file('../data/external/taxi_zones_shape/taxi_zones.shp')
+    shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng"],
+                   axis=1, inplace=True)
+    shape_df = shape_df.to_crs({'init': 'epsg:4326'})
+
+    try:
+        local_gdf = gpd.GeoDataFrame(
+            localdf, crs={'init': 'epsg:4326'},
+            geometry=[Point(xy) for xy in
+                      zip(localdf[lon_var], localdf[lat_var])])
+
+        local_gdf = gpd.sjoin(
+            local_gdf, shape_df, how='left', op='within')
+
+        return local_gdf.LocationID.rename(locid_var)
+    except ValueError as ve:
+        print(ve)
+        print(ve.stacktrace())
+        series = localdf[lon_var]
+        series = np.nan
+        return series

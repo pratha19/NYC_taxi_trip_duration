@@ -104,21 +104,23 @@ def prepare_dataframe(raw_df = None, nyc_long_limits = (-74.257159, -73.699215),
         print("There are NULL values in the dataset. You'll have take of the null values separately, this function doesn't deal \
               with Null value")
     # Adding extra datetime columns 
-    df['pickup_date'] = df.pickup_datetime.dt.date
+    df['pickup_date'] = pd.to_datetime(df.pickup_datetime.dt.date)
     df['pickup_month'] = df.pickup_datetime.dt.month
-    df['pickup_day'] = df.pickup_datetime.dt.day
+    df['pickup_day'] = df.pickup_datetime.dt.day  
     df['pickup_hour'] = df.pickup_datetime.dt.hour
     df['pickup_weekday'] = df.pickup_datetime.dt.weekday_name
     df["vendorid"] = df["vendorid"].astype('category')
     
-    cats = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    cat_dtype = pd.api.types.CategoricalDtype(categories = cats, ordered=True)
-    df['pickup_weekday'] = df['pickup_weekday'].astype(cat_dtype)
-        
+    #cats = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    #cat_dtype = pd.api.types.CategoricalDtype(categories = cats, ordered=True)
+    #df['pickup_weekday'] = df['pickup_weekday'].astype(cat_dtype)
+    df['pickup_weekday'] = pd.Categorical(df['pickup_weekday'], 
+                                           categories= ['Monday','Tuesday','Wednesday','Thursday',
+                                                        'Friday','Saturday', 'Sunday'], ordered=True)   
     #Adding holidays column to indicate whether a day was a holiday as per the US calendar or not
     cal = calendar()
     holidays = cal.holidays(start =  df.pickup_datetime.dt.date.min(), end =  df.pickup_datetime.dt.date.max())
-    df['holiday'] = 1*df.pickup_datetime.dt.date.isin(holidays)
+    df['holiday'] = 1*pd.to_datetime(df.pickup_datetime.dt.date).isin(holidays) 
 
     # ADD haversine distance
     df['distance_hav'] = df.apply(lambda x: haversine((x['pickup_latitude'], x['pickup_longitude']), 
