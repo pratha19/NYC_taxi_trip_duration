@@ -77,6 +77,9 @@ def bokeh_distplot(data, category_col = 'trip_bins_minutes', value = 'pickup_lat
     return(p)
         
 def zone_plot(nyc_shp, fill_color = 'LocationID'):
+    """
+    Plots the zone and borough boundaries.
+    """
     gjds = bokeh.models.GeoJSONDataSource(geojson = nyc_shp.to_json())
     TOOLS = "pan, wheel_zoom,reset,hover,save"
     
