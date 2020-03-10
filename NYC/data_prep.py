@@ -66,7 +66,8 @@ def haversine(coord1, coord2):
     function to save considerable amount of time and not lose much of the accuracy. I compared the values from both the functions
     and 99.8% of the times the difference in those values is less than 0.37 miles. So, using haversine here.
     
-    If you want to use the more accurate geopy.geodesic function then simply import the function as, from geopy.distance import geodesic
+    If you want to use the more accurate geopy.geodesic function then simply import the function as, 
+    -- from geopy.distance import geodesic
     and use it in the prepare_dataframe function below instead of the haversine function.
     """
     R = 6372800  # Earth radius in meters

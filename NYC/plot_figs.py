@@ -8,15 +8,17 @@ plt.style.use('bmh')
 plt.rcParams['figure.figsize'] = [10, 5]
 import geopandas as gpd
 from shapely.geometry import Point
+import bokeh_catplot
 import numpy as np
 from bokeh.io import output_file, output_notebook, show, curdoc
 import bokeh, bokeh.plotting, bokeh.models # check if repeated
 from bokeh.models import (
   GMapPlot, GMapOptions, ColumnDataSource, Circle, LogColorMapper, BasicTicker, LogTicker, ColorBar,
-    DataRange1d, Range1d, PanTool, WheelZoomTool, BoxSelectTool, ResetTool, SaveTool, CustomJS, Slider
-)
+    DataRange1d, Range1d, PanTool, WheelZoomTool, BoxSelectTool, ResetTool, SaveTool, CustomJS, Slider,
+    Legend, LegendItem
+                            )
 from bokeh.models.widgets import Button, CheckboxButtonGroup, CheckboxGroup
-from bokeh.models.mappers import ColorMapper, LinearColorMapper
+from bokeh.models.mappers import ColorMapper, LinearColorMapper, CategoricalColorMapper
 from bokeh import palettes
 from bokeh.layouts import column, row, widgetbox, gridplot
 from bokeh.plotting import figure, gmap, show
@@ -60,6 +62,19 @@ def distribution(x_col, data, scale = None, bins = 100, figsize = (10,7)):
     _ = plt.ylabel('count')
     if scale: 
         _ = plt.xscale(scale)
+
+def bokeh_distplot(data, category_col = 'trip_bins_minutes', value = 'pickup_latitude',
+                  plot_width=500, plot_height = 300):
+    """
+    Plots the distribution of the _value_ varaible categorized by the _category_col_.
+    """
+    p = bokeh_catplot.histogram(
+    data = data,
+    cats = category_col,
+    val = value, plot_width = plot_width, plot_height = plot_height, 
+    title = "Distribution of "+value+" categorized by "+category_col
+                                )
+    return(p)
         
 def zone_plot(nyc_shp, fill_color = 'LocationID'):
     gjds = bokeh.models.GeoJSONDataSource(geojson = nyc_shp.to_json())
@@ -127,7 +142,9 @@ def plot_single_gmaps(data, latitude_column = 'pickup_latitude', longitude_colum
                          color_column = 'trip_duration', size_column = 0.5,
                          api_key = None, map_type = 'roadmap', map_zoom = 10):
     
-    """Takes in the columns of data including the lat and lon to be plotted on gmaps. 
+    """
+    Plot interactive plot of all data points on a google map.
+    Takes in the columns of data including the lat and lon to be plotted on gmaps. 
     data: dataframe including the lat and lon locations
     color_column: column name according to which the points will be colored and a colorbar will be plotted
     size_column: can be int/float or column name in string. If column name then that column will be used to scale the size of the points.
@@ -142,7 +159,7 @@ def plot_single_gmaps(data, latitude_column = 'pickup_latitude', longitude_colum
     map_options = GMapOptions(lat = data[latitude_column].mean(), lng = data[longitude_column].mean(), 
                               map_type = map_type, zoom = map_zoom)
     
-    Tools = "box_select, wheel_zoom, pan, reset, help"
+    Tools = "box_select, wheel_zoom, pan, reset, help" 
     
     # You can use either a GmapPlot or gmap to create the plot
     plot = GMapPlot(api_key = api_key, map_options = map_options, #x_range = Range1d(), y_range = Range1d(),
@@ -150,8 +167,11 @@ def plot_single_gmaps(data, latitude_column = 'pickup_latitude', longitude_colum
     
     pan = PanTool()
     wheel_zoom = WheelZoomTool()
-    box_select = BoxSelectTool()
-    plot.add_tools(pan, wheel_zoom, box_select)
+    box_select = BoxSelectTool() 
+    reset_tool = ResetTool() 
+    save_tool = SaveTool()
+    
+    plot.add_tools(pan, wheel_zoom, box_select, reset_tool, save_tool)
     
     plot.title.text = "NYC taxi {} locations {}".format(latitude_column.split('_')[0].capitalize(), 
                                                         data.pickup_datetime.dt.year.unique().tolist())
@@ -169,16 +189,19 @@ def plot_single_gmaps(data, latitude_column = 'pickup_latitude', longitude_colum
     
     #color_mapper = LinearColorMapper(palette="Dark2")
 
-    color_mapper = LinearColorMapper(palette = "RdYlBu5", low = np.percentile(data[color_column], 1), 
-                                                         high = np.percentile(data[color_column], 99))
-    color_bar = ColorBar(color_mapper = color_mapper, ticker = BasicTicker(),
-                     label_standoff = 12, border_line_color = None, location = (0,0), title = 'trip_duration seconds')
-    plot.add_layout(color_bar, 'right')
+    if not np.issubdtype(data[color_column].dtype, np.number):
+        raise TypeError('Only numeric data types can be passed as a color column')
+    else:
+        color_mapper = LinearColorMapper(palette = "RdYlBu5", low = np.percentile(data[color_column], 1), 
+                                                              high = np.percentile(data[color_column], 99))
+        color_bar = ColorBar(color_mapper = color_mapper,ticker = BasicTicker(),
+                            label_standoff = 12, border_line_color = None, location = (0,0), title = color_column)
+        plot.add_layout(color_bar, 'right')
     circle = Circle(x = "lon", y = "lat", fill_alpha = 0.7, size = "size", 
-                    fill_color={'field': 'color', 'transform': color_mapper}, line_color = None)
+                    fill_color  ={'field': 'color', 'transform': color_mapper}, line_color = None)
     
     plot.add_glyph(source, circle)
-    
+        
     # removed the below because gmap already adds them by default. We can change it by using the tools property
     #plot.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), ResetTool(), SaveTool())
     
