@@ -278,3 +278,175 @@ def plot_zone_trips_counts(df, nyc_shp, to_plot = 'count', col_to_plot = "pickup
     p.add_layout(color_bar, 'below')
     
     return p
+
+def plot_gmaps(data, slider = False, latitude_column= ['pickup_latitude', 'dropoff_latitude'], 
+               longitude_column = ['pickup_longitude', 'dropoff_longitude'],
+               color_column = 'trip_duration', size_column = 3.0,
+               api_key = None, map_type = 'roadmap', map_zoom = 10):
+        
+    """Plots interactive plot of NYC taxi pickup and dropoff locations on the google maps. Pickup and dropoff locations are plotted side
+        by side and if you select some location/s on the pickup plot the corresponding dropoff locations will be highlighted in the dropoff
+        plot. 
+        data: dataframe with nyc trips info
+        slider: if True, will plot a slider for selecting a particular hour in the day. default: False
+        latitide_column: pickup and dropoff lat pairs
+        longitude_column: pickup and dropoff lon pairs
+        color_column: column in the dataframe to be used for color labeling the scatter points
+        size_column: column to be used to determine the size of the scatter points. Can be constant scaler or any dataframe column.
+        api_key: your Google maps API key """
+
+    #callback function
+    data = data.copy()
+    if not isinstance(size_column, str):
+        s = size_column
+        size_column = 'constant'
+        data[size_column] = s
+        
+    def modify_plot(doc):     
+        #######################################################################################################################
+        # Update the checkbox values
+        
+        ## Checkbox for hour of the day values
+        def update_hour(atrr, old, new): 
+            data_to_plot = [int(checkbox_group_hour.labels[i]) for i in checkbox_group_hour.active] 
+            new_data = data[data.pickup_hour.isin(data_to_plot)]
+            source.data = dict(
+                latp = new_data[latitude_column[0]].tolist(),
+                lonp = new_data[longitude_column[0]].tolist(),
+                latd = new_data[latitude_column[1]].tolist(),
+                lond = new_data[longitude_column[1]].tolist(),
+                size = new_data[size_column].tolist(),
+                color = new_data[color_column].tolist()
+            )
+            
+        hours = data.pickup_hour.unique().tolist()
+        hours.sort()
+        str1 = [str(i) for i in hours]
+        checkbox_group_hour = CheckboxButtonGroup(labels = str1, active=[0, 1])
+        
+        ## Adding a slider for the hour also as another option
+        
+        def update_hour_slider(atrr, old, new): 
+            hour = slider_hour.value
+            new_data = data[data.pickup_hour == hour]
+            source.data = dict(
+                latp = new_data[latitude_column[0]].tolist(),
+                lonp = new_data[longitude_column[0]].tolist(),
+                latd = new_data[latitude_column[1]].tolist(),
+                lond = new_data[longitude_column[1]].tolist(),
+                size = new_data[size_column].tolist(),
+                color = new_data[color_column].tolist()
+                )
+
+        slider_hour = Slider(title='Hour of the day', start = 0, end = 23, step = 1, value = 17)
+        
+        ## Checkbox for weekday values
+        def update_weekday(atrr, old, new): 
+            data_to_plot = [checkbox_group_weekday.labels[i] for i in checkbox_group_weekday.active] 
+            new_data = data[data.pickup_weekday.isin(data_to_plot)]
+            source.data = dict(
+                latp = new_data[latitude_column[0]].tolist(),
+                lonp = new_data[longitude_column[0]].tolist(),
+                latd = new_data[latitude_column[1]].tolist(),
+                lond = new_data[longitude_column[1]].tolist(),
+                size = new_data[size_column].tolist(),
+                color = new_data[color_column].tolist()
+            )
+            
+        weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        checkbox_group_weekday = CheckboxButtonGroup(labels = weekdays, active=[0, 1])
+        
+        
+        #########################################################################################################
+        # CREATE THE PLOT
+        # Assigning map options
+        map_options = GMapOptions(lat = data[latitude_column[0]].mean(), lng = data[longitude_column[0]].mean(), 
+                                      map_type = 'roadmap', zoom = 10)
+        
+        assert len(latitude_column) == len(longitude_column), "latitude and longitude list should be same"
+            
+        # Pickup plot
+        plotP = GMapPlot(x_range = Range1d(), y_range = Range1d(), map_options = map_options, 
+                        plot_width = 500, plot_height = 400)
+        
+        # Dropoff plot
+        plotD = GMapPlot(x_range = Range1d(), y_range = Range1d(), map_options = map_options, 
+                        plot_width = 500, plot_height = 400)
+        
+        # ASsigning the Google API keys
+        plotP.api_key = api_key
+        plotD.api_key = api_key
+        
+        source = ColumnDataSource(
+            data = dict(
+                latp = data[latitude_column[0]].tolist(),
+                lonp = data[longitude_column[0]].tolist(),
+                latd = data[latitude_column[1]].tolist(),
+                lond = data[longitude_column[1]].tolist(),
+                size = data[size_column].tolist(),
+                color = data[color_column].tolist()
+            )
+        )
+        
+        plotP.title.text = "NYC taxi pickup locations {}".format(
+                                                      data.pickup_datetime.dt.year.unique().tolist())
+        
+        plotD.title.text = "NYC taxi dropoff locations {}".format(
+                                                      data.dropoff_datetime.dt.year.unique().tolist())
+        #RdYlGn5, RdBu4
+        # Add color mapper for the color bar
+        color_mapper = LinearColorMapper(palette = "RdYlGn8", low = np.percentile(data[color_column], 1), 
+                                                           high = np.percentile(data[color_column], 99))
+        
+        # Add the scatter points
+        circleP = Circle(x = "lonp", y = "latp", fill_alpha = 0.8, size = "size", 
+                        fill_color={'field': 'color', 'transform': color_mapper}, line_color = None)
+
+        circleD = Circle(x = "lond", y = "latd", fill_alpha = 0.8, size = "size", 
+                        fill_color={'field': 'color', 'transform': color_mapper}, line_color = None)
+        
+        # Only the user selected scatter points will be highlighted
+        #selected_circle = Circle(fill_alpha = 1) #, fill_color = "firebrick", line_color = None)
+        nonselected_circle = Circle(fill_alpha = 0.1, fill_color = "grey", line_color= None)
+        ###############
+        
+        plotP.add_glyph(source, circleP, nonselection_glyph = nonselected_circle)#, selection_glyph = selected_circle, )
+        plotD.add_glyph(source, circleD, nonselection_glyph = nonselected_circle)#, selection_glyph = selected_circle, )
+        
+        
+        # Add color bar. ADding to only one of the plots becaue their x and y axis are scaled together
+        color_bar = ColorBar(color_mapper = color_mapper, ticker = BasicTicker(),
+                             label_standoff = 12, border_line_color = None, location = (0,0), title = color_column)
+        
+        plotD.add_layout(color_bar, 'right')
+        
+        # Add the basic interactive tools
+        plotP.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), ResetTool(), SaveTool())
+        plotD.add_tools(PanTool(), WheelZoomTool(), BoxSelectTool(), ResetTool(), SaveTool())
+        #########################################################################################################
+        
+        #plots.append(plot)
+            
+        # Keep the ranges same for both plots so that when one plot is zoomed in the other will too
+        # For now switching this off because when zooming in or panning one plot the points in other plot were swaying off
+        # their original geo locations
+        #plotD.x_range = plotP.x_range
+        #plotD.y_range = plotP.y_range
+        
+        # Create the layout with widgets and actual plots
+        if slider:
+            rowl = row(plotP, plotD)
+            layout = column(checkbox_group_weekday, widgetbox(slider_hour), rowl)#)
+            slider_hour.on_change('value', update_hour_slider)
+        else:
+            rowl = row(plotP, plotD)
+            layout = column(checkbox_group_hour, checkbox_group_weekday, rowl)#row(plotP, plotD))
+            checkbox_group_hour.on_change('active', update_hour)
+        
+        checkbox_group_weekday.on_change('active', update_weekday)
+        
+        # add the layout to curdoc
+        doc.add_root(layout)
+        #output_file("NYC_pickup_plot.html")
+        output_notebook()
+    return modify_plot

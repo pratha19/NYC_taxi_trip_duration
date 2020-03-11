@@ -124,3 +124,14 @@ dmypy.json
 # Pyre type checker
 .pyre/
 notebooks/apikey.txt
+data/external/weather/nyc_jan_jun_2016.csv
+data/interim/1_nyc_raw_cony.csv
+data/interim/2_nyc_with_zones.csv
+data/interim/archive/nyc_with_zones.csv
+data/processed/nyc_data.csv
+data/raw/archive/2016_Yellow_Taxi_Trip_Data.csv
+data/raw/archive/test.csv
+data/raw/archive/train.csv
+data/raw/nyc_2016_raw_sql.csv
+data/raw/test.csv
+data/raw/test.csv
