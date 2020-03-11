@@ -196,8 +196,8 @@ def plot_single_gmaps(data, latitude_column = 'pickup_latitude', longitude_colum
         raise TypeError('Only numeric data types can be passed as a color column')
     else:
         color_mapper = LinearColorMapper(palette = "RdYlBu5", low = np.percentile(data[color_column], 1), 
-                                                              high = np.percentile(data[color_column], 99))
-        color_bar = ColorBar(color_mapper = color_mapper,ticker = BasicTicker(),
+                                                              high = np.percentile(data[color_column], 99)) #bokeh.palettes.Turbo256
+        color_bar = ColorBar(color_mapper = color_mapper, ticker = BasicTicker(),
                             label_standoff = 12, border_line_color = None, location = (0,0), title = color_column)
         plot.add_layout(color_bar, 'right')
     circle = Circle(x = "lon", y = "lat", fill_alpha = 0.7, size = "size", 
@@ -228,13 +228,15 @@ def plot_zone_trips_counts(df, nyc_shp, to_plot = 'count', col_to_plot = "pickup
         tag = "Number of trips"
         ticker = LogTicker()
         cbar_title = "Total number of "+col_to_plot.split("_")[0]+"s "
-    #counts.columns = ['N']
+        color_mapper = bokeh.models.LogColorMapper(palette = bokeh.palettes.Turbo256, low = 1, high = counts.N.max())
+
     elif to_plot == 'trip_duration':
         counts = df.groupby(col_to_plot)['trip_duration'].mean().reset_index(name='N')
         counts['N'] = counts['N']/60
         tag = "Trip duration mts"
-        ticker = LogTicker()
+        ticker = BasicTicker()#LogTicker()
         cbar_title = "Trip duration in minutes"
+        color_mapper = bokeh.models.LinearColorMapper(palette = bokeh.palettes.Turbo256, low = 1, high = counts.N.max())
         
     counts2 = nyc_shp.merge(counts, left_on='LocationID', 
                             #right_index=True, 
@@ -247,10 +249,6 @@ def plot_zone_trips_counts(df, nyc_shp, to_plot = 'count', col_to_plot = "pickup
     p = bokeh.plotting.figure(title = title, tools = TOOLS,
                               x_axis_location = None, y_axis_location = None,) 
                               #plot_width = np.int(1.08*500), plot_height = 500)
-    #"RdBu5"
-    color_mapper = bokeh.models.LogColorMapper(palette = bokeh.palettes.Turbo256, 
-                                               low = 1, 
-                                               high = counts.N.max())
     
     p.patches('xs', 'ys', 
               fill_color = {'field': 'N', 'transform': color_mapper},
