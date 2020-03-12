@@ -140,5 +140,25 @@ def prepare_dataframe(raw_df = None, nyc_long_limits = (-74.257159, -73.699215),
                    & (df.distance_hav <= np.percentile(df.distance_hav, 99.8))]
     
     return(df)
+
+def bearing(coordinates):
+    """
+    This function calculates the direction of the trip from the pickup point towards the dropoff point. 
+    Input:
+    coordinates: the coordinates in a list such as [pickup_lat, pickup_lon, dropoff_lat, dropoff_lon]
+    Output:
+    compass_bearing: the radial direction such that N is 0, E is 90, S is 180 and N after a complete circle is 360. 
+    """
+    lat_p = np.radians(coordinates[0])
+    lat_d = np.radians(coordinates[2])
     
+    long_diff = np.radians(coordinates[1] - coordinates[3])
+    x = np.sin(long_diff) * np.cos(lat_d)
+    y = np.cos(lat_p) * np.sin(lat_d) - (np.sin(lat_p)* np.cos(lat_d) * np.cos(long_diff))
+
+    initial_bearing = np.arctan2(x, y)
+    initial_bearing = np.degrees(initial_bearing)
+    compass_bearing = (-initial_bearing - 360)%360
+    
+    return compass_bearing
     

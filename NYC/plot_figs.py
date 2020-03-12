@@ -63,17 +63,18 @@ def distribution(x_col, data, scale = None, bins = 100, figsize = (10,7)):
     if scale: 
         _ = plt.xscale(scale)
 
-def bokeh_distplot(data, category_col = 'trip_bins_minutes', value = 'pickup_latitude',
-                  plot_width=500, plot_height = 300):
+def bokeh_distplot(data, category_col = ['trip_bins_minutes'], value = 'pickup_latitude',
+                  plot_width=500, plot_height = 300, legend_loc = 'top_right'):
     """
-    Plots the distribution of the _value_ varaible categorized by the _category_col_.
+        Plots the distribution of the _value_ varaible categorized by the _category_col_.
     """
     p = bokeh_catplot.histogram(
     data = data,
     cats = category_col,
     val = value, plot_width = plot_width, plot_height = plot_height, 
-    title = "Distribution of "+value+" categorized by "+category_col
+    title = "Distribution of "+value+" categorized by "+str([*category_col])
                                 )
+    p.legend.location = legend_loc
     return(p)
         
 def zone_plot(nyc_shp, fill_color = 'LocationID'):
@@ -447,7 +448,8 @@ def plot_gmaps(data, slider = False, latitude_column= ['pickup_latitude', 'dropo
         
         # add the layout to curdoc
         doc.add_root(layout)
-        #output_file("interactive_JFK_trips.html") #../data/interim/images/
+        #output_file("../data/interim/images/interactive_JFK_trips.html")
         output_notebook()
         #_ = save(layout, filename = "interactive_JFK_trips.html")
+    #output_file("../data/interim/images/interactive_JFK_trips.html")
     return(modify_plot) 
