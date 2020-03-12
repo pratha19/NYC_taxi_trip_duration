@@ -447,6 +447,7 @@ def plot_gmaps(data, slider = False, latitude_column= ['pickup_latitude', 'dropo
         
         # add the layout to curdoc
         doc.add_root(layout)
-        #output_file("NYC_pickup_plot.html")
+        #output_file("interactive_JFK_trips.html") #../data/interim/images/
         output_notebook()
-    return modify_plot
+        #_ = save(layout, filename = "interactive_JFK_trips.html")
+    return(modify_plot) 
