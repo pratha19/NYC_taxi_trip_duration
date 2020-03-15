@@ -1,7 +1,7 @@
 This project involves predicting the yellow taxi trip duration between any two locations X and Y within NYC. 
 
 The project covers the following topics:
-1. [EDA]()     
+1. [EDA](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/NYC_EDA.ipynb)     
 - Raw Data import    
 - External data imports     
 - Data cleaning    
@@ -10,7 +10,7 @@ The project covers the following topics:
 - Inferences  
 - Preparing data attributes for modeling
 
-2. [ML]()   
+2. [ML](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/NYC_ML.ipynb)   
 - Preparing data for modeling  
 - Building and tuning ML models (Basic model to XGBoost)  
 - Comparing the different models  
