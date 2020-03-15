@@ -63,7 +63,7 @@ Linear regression, Random Forest and XGboost were fit on the data. For training 
 Note: RMSLE (root mean squared log error) was used here as the determining metric because metric becaue we didn’t want large errors to be significantly more penalized than smaller ones. RMSLE penalizes underestimates more than overestimates.
 * The RMSE, R2 score, MAE and MAPE for the best XGboost model were 272.96, 0.82, 178.24 and 26.38 respectively. 
 
-__Residual plots using the XGBoost model:_
+__Residual plots using the XGBoost model:__
 ![Test image 1](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/pickup_resid_minutes.png)
 ![Test image 2](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/dropoff_resid_minutes.png)
 ![Test image 3](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/resid_plot.png)
