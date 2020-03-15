@@ -14,15 +14,15 @@ def readme():
 setup(
     name='NYC',
     version='0.1',
-    description='Predicting NYC taxi trip duration from one location to the other',
+    description='Predicting NYC taxi trip duration from location A to B',
     long_description=readme(),
     classifiers=[
         'Programming Language :: Python :: 3',
     ],
-    # Substitute <github_account> with the name of your GitHub account
+
     url='https://github.com/pratha19/NYC_taxi_trip_duration',
-    author='Prathamesh Pawar',  # Substitute your name
-    author_email='pawar.pratha@gmail.com',  # Substitute your email
-    license='MIT',
+    author='Prathamesh Pawar',  
+    author_email='pawar.pratha@gmail.com',  
+    license='',
     packages=['NYC'],
 )
