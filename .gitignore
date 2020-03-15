@@ -144,3 +144,4 @@ data/interim/4_nyc_EDA.csv
 data/raw/test.csv
 data/raw/archive/test_1.csv
 data/raw/test.csv
+data/processed/archive/nyc_data.csv

@@ -8,6 +8,7 @@ import requests
 import json
 from lxml import html
 import math
+
 """
 This module contains user defined functions for importing and cleaning the data and also for adding new features.
 """
