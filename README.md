@@ -21,7 +21,7 @@ This project is inspired by the [NYC taxi trip duration challenge](https://www.k
 
 The motive of the project is to identify the main factors influencing the daily taxi trips of New Yorkers. The taxi trips data is taken from the NYC Taxi and Limousine Commission (TLC), and it includes pickup time, pickup and dropoff geo-coordinates, number of passengers, and several other variables. The taxi trips considered in this project are only for the year 2016 and only those trips will be considered whose exact pickup and dropoff geo-coordinates are available. 
 
-Policy researchers at the TLC and NYC can use the project observations and ML models to observe changing trends in the industry and make informed decisions regarding transporation planning within the city.
+Policy researchers at the TLC and NYC can use the project observations and ML models to observe changing trends in the industry and make informed decisions regarding transportation planning within the city.
 
 __File descriptions:__
 
