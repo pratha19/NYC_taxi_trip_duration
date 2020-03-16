@@ -60,7 +60,7 @@ __RESULTS:__
 
 Linear regression, Random Forest and XGboost were fit on the data. For training only a small sample (500,000) of the ~4.2M trips was used but the best model was tested on the entire dataset to verify that the training sample was selected randomly and represents the entire dataset indeed.  
 * XGBoost with some hyperparameter tuning gave the best result of RMSLE = 0.32. 
-Note: RMSLE (root mean squared log error) was used here as the determining metric because metric becaue we didn’t want large errors to be significantly more penalized than smaller ones. RMSLE penalizes underestimates more than overestimates.
+Note: RMSLE (root mean squared log error) was used here as the determining metric because we didn’t want large errors to be significantly more penalized than smaller ones. RMSLE penalizes underestimates more than overestimates.
 * The RMSE, R2 score, MAE and MAPE for the best XGboost model were 272.96, 0.82, 178.24 and 26.38 respectively. 
 
 __Residual plots using the XGBoost model:__
