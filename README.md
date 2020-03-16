@@ -12,8 +12,8 @@ The project covers the following topics:
 
 2. [ML](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/NYC_ML.ipynb)   
 - Preparing data for modeling  
-- Building and tuning ML models (Basic model to XGBoost)  
-- Comparing the different models  
+- Building and tuning ML models
+- Comparing different models  
 - Conclusion and future work  
 
 __Introduction:__
