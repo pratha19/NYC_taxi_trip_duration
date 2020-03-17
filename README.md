@@ -63,16 +63,16 @@ Linear regression, Random Forest and XGboost were fit on the data. For training 
 Note: RMSLE (root mean squared log error) was used here as the determining metric because we didn’t want large errors to be significantly more penalized than smaller ones. RMSLE penalizes underestimates more than overestimates.
 * The RMSE, R2 score, MAE and MAPE for the best XGboost model were 272.96, 0.82, 178.24 and 26.38 respectively. 
 * The median trip duration for the original dataset (4M rows) and the sampled dataset used for modeling is ~664 seconds. We see from the error metrics that the percentage error in predicting the trip duration is 26.38%. That is, our model predicts the trip duration as 178.24 seconds more or less than the actual on an average. This is just 3 minutes and given a busy city like NYC that's a very good performance. And we have used only the variables that were readily available to us.
-* If we further analyze the errors based on the trip duration bins then we observe that the shorter duration trips (0-5, 5-10, 10-20 and 20-40) are predicted very well within a margin of +-1.65 to +- 5 minutes max whereas the longer duration trips such as 40-60 and 60-100 are predicted with a greater error margin of +-8 to +-16 minutes. Given that the 97% of the data lies below the 40 minutes trip duration, our model is perfroming very well on the majority of hte dataset. We can check the longer duration trips further to find ways to improve their performance if desired as well.
+* If we further analyze the errors based on the trip duration bins then we observe that the shorter duration trips (0-5, 5-10, 10-20 and 20-40) are predicted very well within a margin of +-1.65 to +- 5 minutes max whereas the longer duration trips such as 40-60 and 60-100 are predicted with a greater error margin of +-8 to +-16 minutes. Given that the 97% of the data lies below the 40 minutes trip duration, our model is perfroming very well on the majority of hte dataset. We can check the longer duration trips further to find ways to improve their performance if desired as well.  
 
-And, the most important variables other than the distance between the pickup and dropoff locations, are:
-•	hour of the day
-•	weekday
-•	pickup and dropoff lat lons
-•	bearing (trip direction)
-•	even the day of the month and pickup and dropoff zone clusters seem to have some importance in the predictions.
+And, the most important variables other than the distance between the pickup and dropoff locations, are:  
+•	hour of the day  
+•	weekday  
+•	pickup and dropoff lat lons  
+•	bearing (trip direction)  
+•	even the day of the month and pickup and dropoff zone clusters seem to have some importance in the predictions.  
 
-__Residual plots using the XGBoost model:__
+__Residual plots using the XGBoost model:__  
 Note: The negative values of the residuals are over predictions and positive values are the under predicted values (residuals in minutes).   
 * As can be seen from below, the trip duration of taxi rides from-and-to all the important areas including the 5 boroughs (except Staten island) and the airports were predicted within -2 to +2 minutes error by the model.
 ![Test image 1](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/pickup_resid_minutes.png)
