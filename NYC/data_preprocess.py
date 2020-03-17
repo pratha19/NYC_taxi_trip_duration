@@ -2,6 +2,7 @@
 
 from nyc_ml_err_plots import *
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 def add_fourier_terms(df, week_k = 3, day_k = 3):
     """
@@ -31,7 +32,7 @@ def add_fourier_terms(df, week_k = 3, day_k = 3):
     #df = df.drop(['pickup_weekday', 'pickup_hour'], axis = 1)
     return df
     
-def prep_train_test(raw_df, test_size = 0.3, fourier = False):
+def prep_train_test(raw_df, test_size = 0.3, fourier = False, scale = False):
     """
     Function to split the data into train and test sets. 
     raw_df: dataframe to split into train and test sets
@@ -53,6 +54,11 @@ def prep_train_test(raw_df, test_size = 0.3, fourier = False):
     if fourier:
         X_train.drop(['pickup_weekday', 'pickup_hour'], axis = 1, inplace = True)
         X_test.drop(['pickup_weekday', 'pickup_hour'], axis = 1, inplace = True)
+        
+    if scale:
+        scaler = StandardScaler()
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
 
     
     return(X_train, X_test, y_train, y_test)

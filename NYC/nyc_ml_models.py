@@ -27,9 +27,9 @@ def cv_optimize(model, parameters, X_train, y_train, n_folds = 3, scoring = 'r2'
     return best
 
 def do_regression(model, parameters, df, dict_error, model_name = None, test_size = 0.3, add_zone_avg = False,
-                  fourier = False):
+                  fourier = False, scale = False):
           
-    X_train, X_test, y_train, y_test = prep_train_test(df, test_size = test_size, fourier = fourier)
+    X_train, X_test, y_train, y_test = prep_train_test(df, test_size = test_size, fourier = fourier, scale = scale)
     
     model = cv_optimize(model, parameters, X_train, y_train)
     t0 = time.time()
