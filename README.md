@@ -16,7 +16,7 @@ The project covers the following topics:
 - Comparing different models  
 - Conclusion and future work  
 
-__Introduction:__
+__Introduction:__  
 This project is inspired by the [NYC taxi trip duration challenge](https://www.kaggle.com/c/nyc-taxi-trip-duration/overview) hosted on Kaggle. But instead of using the train and test data from Kaggle taxi data was queried directly from the city of NY's website. Only Yellow taxi trips were considered for this project. More information about different taxi options available in NYC can be found [here](https://www1.nyc.gov/site/tlc/vehicles/get-a-vehicle-license.page).
 
 The motive of the project is to identify the main factors influencing the daily taxi trips of New Yorkers. The taxi trips data is taken from the NYC Taxi and Limousine Commission (TLC), and it includes pickup time, pickup and dropoff geo-coordinates, number of passengers, and several other variables. The taxi trips considered in this project are only for the year 2016 and only those trips will be considered whose exact pickup and dropoff geo-coordinates are available. 
@@ -62,8 +62,19 @@ Linear regression, Random Forest and XGboost were fit on the data. For training 
 * XGBoost with some hyperparameter tuning gave the best result of RMSLE = 0.32. 
 Note: RMSLE (root mean squared log error) was used here as the determining metric because we didn’t want large errors to be significantly more penalized than smaller ones. RMSLE penalizes underestimates more than overestimates.
 * The RMSE, R2 score, MAE and MAPE for the best XGboost model were 272.96, 0.82, 178.24 and 26.38 respectively. 
+* The median trip duration for the original dataset (4M rows) and the sampled dataset used for modeling is ~664 seconds. We see from the error metrics that the percentage error in predicting the trip duration is 26.38%. That is, our model predicts the trip duration as 178.24 seconds more or less than the actual on an average. This is just 3 minutes and given a busy city like NYC that's a very good performance. And we have used only the variables that were readily available to us.
+* If we further analyze the errors based on the trip duration bins then we observe that the shorter duration trips (0-5, 5-10, 10-20 and 20-40) are predicted very well within a margin of +-1.65 to +- 5 minutes max whereas the longer duration trips such as 40-60 and 60-100 are predicted with a greater error margin of +-8 to +-16 minutes. Given that the 97% of the data lies below the 40 minutes trip duration, our model is perfroming very well on the majority of hte dataset. We can check the longer duration trips further to find ways to improve their performance if desired as well.  
 
-__Residual plots using the XGBoost model:__
+And, the most important variables other than the distance between the pickup and dropoff locations, are:  
+•	hour of the day  
+•	weekday  
+•	pickup and dropoff lat lons  
+•	bearing (trip direction)  
+•	even the day of the month and pickup and dropoff zone clusters seem to have some importance in the predictions.  
+
+__Residual plots using the XGBoost model:__  
+Note: The negative values of the residuals are over predictions and positive values are the under predicted values (residuals in minutes).   
+* As can be seen from below, the trip duration of taxi rides from-and-to all the important areas including the 5 boroughs (except Staten island) and the airports were predicted within -2 to +2 minutes error by the model.
 ![Test image 1](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/pickup_resid_minutes.png)
 ![Test image 2](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/dropoff_resid_minutes.png)
 ![Test image 3](https://github.com/pratha19/NYC_taxi_trip_duration/blob/master/data/processed/resid_plot.png)
