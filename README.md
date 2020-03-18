@@ -17,7 +17,8 @@ The project covers the following topics:
 - Conclusion and future work  
 
 Note: I have also added a notebook for further exploring the ML models used in the main ML notebook listed above. This notebook contains a more robust baseline model which takes average of the trip duration over each hour and uses that to make predictions on the test set, Linear regression model with all variables instead of just 3 variables that were used in the main notebook, RF model trained with higher value of max_depth to remove the flattening of the predicted values and XGBoost model with further hyperparameter tuning. 
-You can find that notebook [here](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/Further%20tuning%20RF%20and%20XGBoost.ipynb#5).
+You can find that notebook below:   
+[Further exploring the ML models](https://nbviewer.jupyter.org/github/pratha19/NYC_taxi_trip_duration/blob/master/notebooks/Further%20tuning%20RF%20and%20XGBoost.ipynb#5).
 
 __Introduction:__  
 This project is inspired by the [NYC taxi trip duration challenge](https://www.kaggle.com/c/nyc-taxi-trip-duration/overview) hosted on Kaggle. But instead of using the train and test data from Kaggle taxi data was queried directly from the city of NY's website. Only Yellow taxi trips were considered for this project. More information about different taxi options available in NYC can be found [here](https://www1.nyc.gov/site/tlc/vehicles/get-a-vehicle-license.page).
